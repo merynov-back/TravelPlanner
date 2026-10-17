@@ -1,6 +1,70 @@
-.venv/
+# --- Python ---
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Virtual environments ---
+venv/
+.venv/
+env/
+ENV/
+
+# --- Environment variables / secrets ---
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Build artifacts ---
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- Databases ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Docker ---
+docker-compose.override.yml
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Test and linter caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# --- IDE / editors ---
+.vscode/
 .idea/
+*.swp
+*.swo
+*.code-workspace
+.python-version
+
+# --- OS files ---
 .DS_Store
+Thumbs.db
+
+# --- Misc ---
+*.bak
+*.tmp
+
+# --- Tools ---
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# --- Local notes ---
+review.md
