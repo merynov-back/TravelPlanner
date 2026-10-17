@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, status
 
-from api.dependencies import ProjectServiceDep
-from schemas.project import (
+from src.dependencies.services import ProjectServiceDep
+from src.schemas.project import (
     ProjectCreate,
     ProjectDetailResponse,
     ProjectListResponse,
@@ -12,17 +12,22 @@ from schemas.project import (
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
-@router.post("", response_model=ProjectDetailResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=ProjectDetailResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create a project (optionally with places)",
+)
 async def create_project(payload: ProjectCreate, service: ProjectServiceDep):
     return await service.create_project(payload)
 
 
-@router.get("", response_model=ProjectListResponse)
+@router.get("", response_model=ProjectListResponse, summary="List projects")
 async def list_projects(
     service: ProjectServiceDep,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
-    name: str | None = Query(default=None, description="Search by project name"),
+    name: str | None = Query(default=None, max_length=255, description="Search by project name"),
     completed: bool | None = Query(default=None),
 ):
     offset = (page - 1) * page_size
@@ -32,16 +37,20 @@ async def list_projects(
     return ProjectListResponse(items=items, total=total)
 
 
-@router.get("/{project_id}", response_model=ProjectDetailResponse)
+@router.get("/{project_id}", response_model=ProjectDetailResponse, summary="Get a project with its places")
 async def get_project(project_id: int, service: ProjectServiceDep):
     return await service.get_project(project_id)
 
 
-@router.patch("/{project_id}", response_model=ProjectResponse)
+@router.patch("/{project_id}", response_model=ProjectResponse, summary="Update a project")
 async def update_project(project_id: int, payload: ProjectUpdate, service: ProjectServiceDep):
     return await service.update_project(project_id, payload)
 
 
-@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{project_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a project (forbidden if any place is visited)",
+)
 async def delete_project(project_id: int, service: ProjectServiceDep):
     await service.delete_project(project_id)

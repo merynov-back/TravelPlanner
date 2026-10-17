@@ -1,18 +1,17 @@
 from typing import Annotated
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from db.session import get_db
-from repositories.place_repository import PlaceRepository
-from repositories.project_repository import ProjectRepository
-from services.art_api_service import ArtInstituteService, art_institute_service
-from services.place_service import PlaceService
-from services.project_service import ProjectService
 
-DbSession = Annotated[AsyncSession, Depends(get_db)]
+from fastapi import Depends, Request
+
+from src.dependencies.database import DbSession
+from src.repositories.place_repository import PlaceRepository
+from src.repositories.project_repository import ProjectRepository
+from src.services.art_api_service import ArtInstituteService
+from src.services.place_service import PlaceService
+from src.services.project_service import ProjectService
 
 
-def get_art_api_service() -> ArtInstituteService:
-    return art_institute_service
+def get_art_api_service(request: Request) -> ArtInstituteService:
+    return ArtInstituteService(request.app.state.art_api_client)
 
 
 def get_project_repository(session: DbSession) -> ProjectRepository:

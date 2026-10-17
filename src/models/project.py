@@ -2,7 +2,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from sqlalchemy import Boolean, Date, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from db.base import Base
+from src.models.base import Base
 
 
 class TravelProject(Base):
@@ -24,8 +24,10 @@ class TravelProject(Base):
         nullable=False,
     )
 
+    # Places are loaded explicitly with selectinload where they are needed
     places: Mapped[list["Place"]] = relationship(
         back_populates="project",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        passive_deletes=True,
+        lazy="raise",
     )

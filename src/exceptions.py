@@ -1,5 +1,10 @@
+import logging
+
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
+
+logger = logging.getLogger(__name__)
 
 
 class AppException(Exception):
@@ -41,8 +46,17 @@ def register_exception_handlers(app: FastAPI) -> None:
             content={"detail": exc.detail},
         )
 
+    @app.exception_handler(IntegrityError)
+    async def integrity_error_handler(request: Request, exc: IntegrityError) -> JSONResponse:
+        logger.warning("Integrity error on %s %s: %s", request.method, request.url.path, exc.orig)
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"detail": "Data conflicts with existing records"},
+        )
+
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+        logger.exception("Unhandled error on %s %s", request.method, request.url.path)
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={"detail": "Internal server error"},

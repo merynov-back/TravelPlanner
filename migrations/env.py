@@ -6,13 +6,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from core.config import settings
-from db.base import Base
-
-# Import all models so their tables are registered on Base.metadata
-# before Alembic compares it against the database (required for autogenerate).
-from models.project import TravelProject  # noqa: F401
-from models.place import Place  # noqa: F401
+from src.config import settings
+from src.models import Base, Place, TravelProject  # noqa: F401
 
 config = context.config
 

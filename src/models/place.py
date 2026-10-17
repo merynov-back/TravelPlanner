@@ -2,7 +2,7 @@ from __future__ import annotations
 from datetime import datetime
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from db.base import Base
+from src.models.base import Base
 
 
 class Place(Base):
@@ -30,4 +30,4 @@ class Place(Base):
         nullable=False,
     )
 
-    project: Mapped["TravelProject"] = relationship(back_populates="places")
+    project: Mapped["TravelProject"] = relationship(back_populates="places", lazy="raise")
